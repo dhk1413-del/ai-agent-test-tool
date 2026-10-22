@@ -13,7 +13,7 @@
 {
   "id": "p_1a2b3c",
   "name": "xxx大学图书馆AI馆员",
-  "url": "https://robot.chaoxing.com/coze?accessToken=...",
+  "url": "https://robot.chaoxing.com/coze/web?accessToken=xxx&unitId=xxx&robotId=xxx",
   "questions": ["问题1", "问题2", "... 共10条"],
   "createdAt": "2026-09-20T16:30:00.000Z",
   "updatedAt": "2026-09-20T16:30:00.000Z",

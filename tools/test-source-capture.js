@@ -6,7 +6,7 @@ const path = require('path');
 const CFG = require('../lib/config');
 const { RobotRunner } = require('../lib/robot');
 
-const URL_ = 'https://robot.chaoxing.com/coze/web?unitId=25425&robotId=c1d19e7173504b6399373b87dbade2ac';
+const URL_ = 'https://robot.chaoxing.com/coze/web?accessToken=xxx&unitId=xxx&robotId=xxx';
 
 (async () => {
   const runner = new RobotRunner({

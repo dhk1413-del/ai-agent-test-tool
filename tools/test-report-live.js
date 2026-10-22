@@ -16,7 +16,7 @@ const store = require('../lib/store');
 const { RobotRunner, deriveSource } = require('../lib/robot');
 const { buildRunReport } = require('../lib/report');
 
-const URL_ = 'https://robot.chaoxing.com/coze/web?unitId=25425&robotId=c1d19e7173504b6399373b87dbade2ac';
+const URL_ = 'https://robot.chaoxing.com/coze/web?accessToken=xxx&unitId=xxx&robotId=xxx';
 // 第 3 题刻意问一个知识库覆盖不到的问题，用来触发「其他」来源
 const QUESTIONS = [
   '图书馆的开放时间是怎样安排的？',
