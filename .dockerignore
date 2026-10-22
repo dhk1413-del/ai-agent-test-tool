@@ -1,0 +1,23 @@
+# 依赖在镜像内重新安装, 不复制宿主机的 node_modules（含平台相关二进制）
+node_modules
+
+# 运行期数据, 由 volume 挂载提供
+data
+data-reporttest
+chrome-profile
+
+# 文档与预览图, 运行不需要
+*.docx
+ui-*.png
+示例报告-*.docx
+
+# 开发/工具产物
+tools/.tmp
+*.log
+
+# 容器自身文件不必进镜像
+Dockerfile
+docker-compose.yml
+.dockerignore
+.git
+.gitignore

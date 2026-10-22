@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mock AI Chat</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 16px; }
+  #messages { min-height: 300px; }
+  .row { margin: 10px 0; }
+  .message-avatar { padding: 8px 12px; border-radius: 8px; max-width: 70%; }
+  .message-avatar.right { background: #e8f0fe; margin-left: auto; }
+  .message-avatar.left { background: #f1f2f6; margin-right: auto; white-space: pre-wrap; }
+  #bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px; background: #fff; border-top: 1px solid #ddd; display: flex; gap: 8px; }
+  #q { flex: 1; height: 60px; width: 100%; }
+  .send-button { padding: 10px 18px; }
+  .new-chat { float: right; padding: 6px 12px; }
+</style>
+</head>
+<body>
+<button class="new-chat" id="newchat">New chat</button>
+<h3>Mock AI Chat</h3>
+
+<div id="messages"></div>
+
+<div id="bar">
+  <textarea id="q" placeholder="Ask something..."></textarea>
+  <button class="send-button" id="send">Send</button>
+</div>
+
+<script>
+  var messages = document.getElementById('messages');
+  var q = document.getElementById('q');
+  var send = document.getElementById('send');
+  var seq = 0;
+
+  // 每条消息返回固定长度的假回答，避免被 waitAnswer 判成占位符
+  function answerFor(text) {
+    return 'ANSWER-FOR[' + text + '] :: ' + new Array(30).join('detail ');
+  }
+
+  function addLeft(qtext) {
+    var row = document.createElement('div');
+    row.className = 'row';
+    var av = document.createElement('div');
+    av.className = 'message-avatar left';
+    av.setAttribute('data-q', qtext);
+    row.appendChild(av);
+    messages.appendChild(row);
+    return av;
+  }
+
+  function doSend() {
+    var text = (q.value || '').trim();
+    if (!text) return;
+
+    // 右侧用户气泡：引擎用它确认「消息已发送」
+    var row = document.createElement('div');
+    row.className = 'row';
+    var u = document.createElement('div');
+    u.className = 'message-avatar right sent-message';
+    u.textContent = text;
+    row.appendChild(u);
+    messages.appendChild(row);
+
+    q.value = '';
+    window.scrollTo(0, document.body.scrollHeight);
+
+    var av = addLeft(text);
+    var full = answerFor(text);
+    var i = 0;
+    // 逐步渲染，模拟真实站点的逐字动画
+    var timer = setInterval(function () {
+      i = Math.min(full.length, i + 12);
+      av.textContent = full.slice(0, i);
+      if (i >= full.length) {
+        clearInterval(timer);
+        // 结束后加个标记，便于人工核对
+        av.setAttribute('data-done', '1');
+      }
+    }, 120);
+  }
+
+  send.addEventListener('click', doSend);
+  q.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doSend(); }
+  });
+  document.getElementById('newchat').addEventListener('click', function () {
+    messages.innerHTML = '';
+    q.value = '';
+    seq++;
+  });
+</script>
+</body>
+</html>

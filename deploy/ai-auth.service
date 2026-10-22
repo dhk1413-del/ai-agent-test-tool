@@ -1,0 +1,17 @@
+[Unit]
+Description=AI Tester login service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/ai-auth/auth.py
+WorkingDirectory=/opt/ai-auth
+Restart=always
+RestartSec=3
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target

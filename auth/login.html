@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>登录 · AI 测试平台</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #1f2937;
+    background: #eef2fb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .blob { position: fixed; border-radius: 50%; filter: blur(60px); opacity: .55; z-index: 0; }
+  .b1 { width: 420px; height: 420px; background: #c7d2fe; top: -90px; left: -80px; }
+  .b2 { width: 380px; height: 380px; background: #ddd6fe; bottom: -110px; right: -60px; }
+  .b3 { width: 260px; height: 260px; background: #bfdbfe; top: 55%; left: 12%; opacity: .4; }
+
+  .card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 392px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 34px 32px 26px;
+    box-shadow: 0 18px 50px rgba(31, 41, 55, .14), 0 2px 8px rgba(31, 41, 55, .06);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+  .logo {
+    width: 46px; height: 46px; border-radius: 13px; flex: none;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff; font-weight: 800; font-size: 19px; letter-spacing: .5px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 16px rgba(79, 70, 229, .35);
+  }
+  .brand-title { font-size: 17px; font-weight: 700; letter-spacing: .3px; }
+  .brand-sub { font-size: 12px; color: #8a90a6; margin-top: 3px; }
+
+  h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: .5px; }
+  .desc { margin: 0 0 22px; font-size: 13px; color: #8a90a6; }
+
+  .field { margin-bottom: 16px; }
+  label { display: block; font-size: 13px; color: #4b5563; margin-bottom: 7px; font-weight: 500; }
+  .input-wrap { position: relative; }
+  input[type="text"], input[type="password"] {
+    width: 100%; height: 42px; padding: 0 42px 0 13px;
+    border: 1px solid #dcdfe6; border-radius: 10px;
+    font-size: 14px; color: #1f2937; background: #fff;
+    outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  input::placeholder { color: #b6bcc9; }
+  input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, .15); }
+  .eye {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    width: 32px; height: 32px; border: 0; border-radius: 8px;
+    background: transparent; cursor: pointer; color: #9aa1b2; font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .eye:hover { background: #f3f4f6; color: #4f46e5; }
+
+  .error {
+    background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca;
+    border-radius: 9px; padding: 9px 12px; font-size: 12.5px;
+    margin-bottom: 14px; line-height: 1.5;
+  }
+  .hidden { display: none; }
+
+  .btn {
+    width: 100%; height: 44px; border: 0; border-radius: 11px;
+    background: linear-gradient(135deg, #4f46e5, #6d28d9);
+    color: #fff; font-size: 15px; font-weight: 600; letter-spacing: 2px;
+    cursor: pointer; margin-top: 4px;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, .32);
+    transition: transform .08s, box-shadow .15s, filter .15s;
+  }
+  .btn:hover { filter: brightness(1.05); box-shadow: 0 10px 24px rgba(79, 70, 229, .38); }
+  .btn:active { transform: translateY(1px); }
+  .btn[disabled] { opacity: .7; cursor: default; }
+
+  .foot { margin-top: 20px; text-align: center; font-size: 11.5px; color: #a3a9b8; line-height: 1.7; }
+  .foot .dot { margin: 0 6px; }
+</style>
+</head>
+<body>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <main class="card">
+    <div class="brand">
+      <div class="logo">AI</div>
+      <div>
+        <div class="brand-title">AI 测试平台</div>
+        <div class="brand-sub">机器人问答自动化测试</div>
+      </div>
+    </div>
+
+    <h1>登录</h1>
+    <p class="desc">请使用管理员提供的账号登录系统</p>
+
+    <div class="error {{ERROR_CLASS}}" id="err">{{ERROR}}</div>
+
+    <form method="post" action="/login" id="login-form" autocomplete="on">
+      <input type="hidden" name="next" value="{{NEXT}}">
+      <div class="field">
+        <label for="username">用户名</label>
+        <div class="input-wrap">
+          <input id="username" name="username" type="text" value="{{USERNAME}}" placeholder="请输入用户名"
+                 autocomplete="username" autocapitalize="off" spellcheck="false" required autofocus>
+        </div>
+      </div>
+      <div class="field">
+        <label for="password">密码</label>
+        <div class="input-wrap">
+          <input id="password" name="password" type="password" placeholder="请输入密码"
+                 autocomplete="current-password" required>
+          <button type="button" class="eye" id="eye" aria-label="显示密码">👁</button>
+        </div>
+      </div>
+      <button class="btn" id="submit-btn" type="submit">登 录</button>
+    </form>
+
+    <div class="foot">
+      遇到问题请联系系统管理员<span class="dot">·</span>仅限授权人员使用
+    </div>
+  </main>
+
+<script>
+  (function () {
+    var pw = document.getElementById(password);
+    var eye = document.getElementById(eye);
+    eye.addEventListener(click, function () {
+      var show = pw.type === password;
+      pw.type = show ? text : password;
+      eye.textContent = show ? 🙈 : 👁;
+      pw.focus();
+    });
+    var form = document.getElementById(login-form);
+    form.addEventListener(submit, function () {
+      var b = document.getElementById(submit-btn);
+      b.disabled = true;
+      b.textContent = 登录中…;
+    });
+  })();
+</script>
+</body>
+</html>

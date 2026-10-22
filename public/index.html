@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 测试平台 · 机器人问答自动化测试</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%234f46e5'/%3E%3Ctext x='16' y='22' font-size='16' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'%3EAI%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="backdrop" id="sidebar-backdrop" data-act="close-sidebar"></div>
+
+<div class="app">
+
+  <!-- ==================== 左侧边栏 ==================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">AI</div>
+      <div class="brand-text">
+        <div class="brand-title">AI 测试平台</div>
+        <div class="brand-sub">机器人问答自动化测试</div>
+      </div>
+    </div>
+
+    <div class="sidebar-new">
+      <button class="btn btn-primary btn-block" data-act="new-project">＋ 新建项目</button>
+    </div>
+
+    <div class="side-section-title">项目列表</div>
+    <div class="project-list" id="project-list"></div>
+
+    <div class="sidebar-footer">
+      <button class="btn btn-ghost btn-block btn-sm settings-btn" data-act="open-settings">⚙　系统设置</button>
+      <div class="chrome-status">
+        <span class="dot dot-gray" id="chrome-dot"></span>
+        <span class="chrome-text" id="chrome-text">浏览器状态检测中…</span>
+      </div>
+      <button class="btn btn-ghost btn-xs" id="btn-restart-chrome" data-act="restart-chrome">重启浏览器</button>
+    </div>
+  </aside>
+
+  <!-- ==================== 主区域 ==================== -->
+  <main class="main">
+    <header class="mobile-bar">
+      <button class="btn btn-ghost btn-sm" data-act="open-sidebar">☰ 项目</button>
+      <span class="mobile-title">AI 测试平台</span>
+      <button type="button" class="btn btn-run btn-sm mobile-run" data-act="start-run">▶ 开始测试</button>
+    </header>
+
+    <div class="main-inner">
+
+      <!-- ---------- 空状态 ---------- -->
+      <section class="view hidden" id="view-empty">
+        <div class="empty-card">
+          <div class="empty-emoji">🤖</div>
+          <h2 class="empty-title">还没有任何测试项目</h2>
+          <p class="empty-desc">
+            新建一个项目，填入 AI 问答机器人的网址和一组测试问题，<br>
+            一键即可跑完一轮自动化问答测试，并导出 Word 报告。
+          </p>
+          <button class="btn btn-primary btn-lg" data-act="new-project">＋ 新建项目</button>
+        </div>
+      </section>
+
+      <!-- ---------- 项目详情 ---------- -->
+      <section class="view hidden" id="view-project">
+
+        <div class="project-layout">
+
+          <!-- 左栏：项目信息 + 测试记录（上下排布） -->
+          <div class="pl-col pl-left">
+
+            <div class="card project-header">
+              <div class="ph-main">
+                <h1 class="proj-name" id="proj-name" data-act="rename-project" title="点击重命名">项目名称</h1>
+                <div class="proj-url-row">
+                  <span class="proj-url" id="proj-url"></span>
+                  <button class="btn btn-ghost btn-xs" data-act="copy-url">复制网址</button>
+                </div>
+                <div class="proj-meta" id="proj-meta"></div>
+              </div>
+              <div class="ph-actions">
+                <button class="btn btn-run hdr-run" data-act="start-run">▶ 开始本轮测试</button>
+                <button class="btn btn-ghost" data-act="edit-project">编辑</button>
+                <button class="btn btn-ghost" data-act="download-summary">⬇ 下载项目汇总报告</button>
+                <button class="btn btn-danger-ghost" data-act="delete-project">删除</button>
+              </div>
+            </div>
+
+            <div class="card progress-card hidden" id="progress-card"></div>
+
+            <div class="card runs-card">
+              <div class="card-head">
+                <h2 class="card-title">测试记录</h2>
+                <span class="muted" id="runs-count"></span>
+              </div>
+              <div class="run-list" id="run-list"></div>
+            </div>
+
+          </div>
+
+          <!-- 右栏：新建测试 -->
+          <div class="pl-col pl-right">
+
+            <div class="card config-card">
+              <div class="card-head">
+                <h2 class="card-title">新建测试</h2>
+              </div>
+
+              <label class="field">
+                <span class="field-label">机器人网址</span>
+                <input class="input" id="cfg-url" type="text" placeholder="https://robot.example.com/chat" spellcheck="false">
+              </label>
+
+              <div class="field">
+                <span class="field-label">测试问题 <span class="hint">从下方分类问题库中勾选，也可在最下方直接编辑</span></span>
+                <div id="cfg-qbank"></div>
+                <textarea class="textarea" id="cfg-questions" rows="11" spellcheck="false" placeholder="每行输入一个要问 AI 机器人的问题"></textarea>
+                <div id="cfg-aigen"></div>
+              </div>
+
+              <div class="config-foot">
+                <button class="btn btn-ghost" id="btn-save-config" data-act="save-config">保存配置</button>
+                <button class="btn btn-run" id="btn-run" data-act="start-run">▶ 开始本轮测试</button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ---------- 轮次详情 ---------- -->
+      <section class="view hidden" id="view-run">
+
+        <div class="card run-head">
+          <div class="run-head-left">
+            <button class="btn btn-ghost btn-sm" data-act="back-to-project">← 返回项目</button>
+            <h1 class="run-title" id="run-title">第 1 轮测试</h1>
+            <div class="run-head-sub" id="run-head-sub"></div>
+          </div>
+          <div class="run-head-actions">
+            <span class="run-controls" id="run-controls"></span>
+            <button class="btn btn-ghost" data-act="download-current-run">⬇ 下载本轮 Word 报告</button>
+            <button class="btn btn-danger-ghost" data-act="delete-current-run">删除本轮</button>
+          </div>
+        </div>
+
+        <div id="run-live" class="hidden"></div>
+
+        <div class="stats-grid" id="run-stats"></div>
+
+        <div class="card results-card">
+          <div class="card-head">
+            <h2 class="card-title">测试结果</h2>
+            <span class="muted" id="res-count"></span>
+          </div>
+          <div class="table-wrap" id="run-results"></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div id="modal-root"></div>
+<div class="toast-root" id="toast-root"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

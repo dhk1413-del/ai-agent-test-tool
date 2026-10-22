@@ -1,0 +1,44 @@
+services:
+  ai-tester:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ai-tester:1.0.0
+    container_name: ai-tester
+    restart: unless-stopped
+
+    ports:
+      # 网页界面：局域网内其它设备也能打开（和应用本身的行为一致）
+      - "3789:3789"
+      # noVNC：仅本机可访问。它能完全操作容器里的浏览器（含已登录的会话），不要暴露到局域网
+      - "127.0.0.1:7900:7900"
+
+    environment:
+      TZ: Asia/Shanghai
+      PORT: "3789"
+      CDP_PORT: "9333"
+      DATA_DIR: /app/data
+      PROFILE_DIR: /app/chrome-profile
+      AI_TESTER_CHROME: /usr/bin/chromium
+      # 容器内以 root 运行, 必须关闭 chromium 沙箱
+      AI_TESTER_NO_SANDBOX: "1"
+      # 设为 1 则无头运行(不需要 noVNC, 但你就看不到/无法登录超星了)
+      # AI_TESTER_HEADLESS: "1"
+      # 给 VNC 设密码(留空=无密码, 配合上面的 127.0.0.1 绑定使用)
+      VNC_PASSWORD: "${VNC_PASSWORD:-}"
+
+    volumes:
+      # 报告/截图/数据库留在宿主机, 换容器不丢
+      - ./data:/app/data
+      # 浏览器配置(登录态)用命名卷保存。注意: 不能挂载 Windows 的 chrome-profile,
+      # 其中的 Cookie 由 Windows DPAPI 加密, 在 Linux 容器里无法解密
+      - ai-tester-profile:/app/chrome-profile
+
+    # Chromium 需要足够的共享内存, 否则标签页会随机崩溃
+    shm_size: "1gb"
+
+    # 单题最长等待时间(秒), 需要更久时取消注释
+    # command: []
+
+volumes:
+  ai-tester-profile:
